@@ -43,9 +43,9 @@ def google(task):
 
 
 def play_song():
-    username = '3165do7y2lvhed6ax7o3guhrhq7m'
-    clientID = '5489c916e67e4871bd191ae179caa050'
-    clientSecret = 'ee3a0548119d44c2b03d320d2306ee4a'
+    username = 'SPOTIFY_USER_NAME'
+    clientID = 'SPOTIFY_CLIENT_ID'
+    clientSecret = 'SPOTIFY_CLIENT_SECRET'
     redirect_uri = 'http://google.com/callback/'
     oauth_object = spotipy.SpotifyOAuth(clientID, clientSecret, redirect_uri)
     token_dict = oauth_object.get_access_token()
@@ -114,7 +114,7 @@ def movie_rec():
     elif in_task(["action"],genre):
         genre_id = 28
 
-    api_key = "e58ea43ba5662ba3e122d41616822faf"   
+    api_key = "THE_MOVIE_DB_API_KEY"   
     try: 
         url = f"https://api.themoviedb.org/3/discover/movie?api_key={api_key}&with_genres={genre_id}"
     except:
@@ -152,7 +152,7 @@ engine.setProperty('voice', voices[2].id)
 r = sr.Recognizer()
 
 # Wolframalpha
-APP_ID = "XPTYKU-VGAGQQUTH8" 
+APP_ID = "WOLFRAMALPHA_API_KEY" 
 client = wolframalpha.Client(APP_ID)
 
 # MAIN
