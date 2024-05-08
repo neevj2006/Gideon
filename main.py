@@ -9,9 +9,15 @@ from bs4 import BeautifulSoup
 import feedparser
 import json
 import wolframalpha
+import pywhatkit
+import datetime
+import wikipedia
 
+# Need to make To Do function
 
 # FUCNTIONS
+
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
@@ -44,25 +50,10 @@ def google(task):
 
 
 def play_song():
-    CLIENT_ID = "b890c23f87884958bff8b927ef2c879d"
-    CLIENT_SECRET = "f553a526548a482ea8782782f8c6bbd4"
-
-    # Spotify Authentication
-    sp = spotipy.Spotify(
-        auth_manager=SpotifyOAuth(
-            scope="user-top-read user-library-read playlist-modify-private playlist-read-collaborative playlist-read-private",
-            redirect_uri="http://example.com",
-            client_id=CLIENT_ID,
-            client_secret=CLIENT_SECRET,
-            show_dialog=True,
-            cache_path="token.txt",
-            username="3165do7y2lvhed6ax7o3guhrhq7m"
-        )
-    )
     speak("Which song would you like to listen to?")
     song = listen()
     res = sp.search(song, limit=1)['tracks']['items'][0]['uri']
-    webbrowser.open(res)
+    webbrowser.open_new_tab(res)
 
 
 def tell_temperature():
@@ -139,6 +130,59 @@ def movie_rec():
         speak("No recommendations found")
 
 
+def send_whatsapp_message(message, me=True):
+    todo_group_id = "HRWAEcZJ0MRHKnbZ8fe0SI"
+    me_group_id = "LwxRbqxmljMF7Gvpsr6c6H"
+    if me:
+        group_id = me_group_id
+    else:
+        group_id = todo_group_id
+    hour = int(str(datetime.now()).split()[1].split(":")[0])
+    minute = int(str(datetime.now()).split()[1].split(":")[1]) + 1
+    if minute >= 60:
+        minute -= 60
+        hour += 1
+    pywhatkit.sendwhatmsg_to_group(group_id, message, hour, minute)
+
+
+def wikipedia_query(query):
+    return wikipedia.summary(query, sentences=3)
+
+
+def getTasks():
+    x = requests.get('https://to-do-backend-an1j.onrender.com/')
+    tasks = []
+    for task in x.json():
+        tasks.append((task['text'], task['_id']))
+    return (tasks)
+
+
+def addTask(task):
+    values = {
+        "text": task
+    }
+    requests.post(
+        'https://to-do-backend-an1j.onrender.com/save', json=values)
+
+
+def updateTask(task, id_s):
+    values = {
+        "text": task,
+        "_id": id_s
+    }
+    requests.post(
+        'https://to-do-backend-an1j.onrender.com/update', json=values)
+
+
+def deleteTask(task, id_s):
+    values = {
+        "text": task,
+        "_id": id_s
+    }
+    requests.post(
+        'https://to-do-backend-an1j.onrender.com/delete', json=values)
+
+
 # MAIN CODE
 # General
 NAME = "Neev"
@@ -156,6 +200,22 @@ r = sr.Recognizer()
 # Wolframalpha
 APP_ID = "WOLFRAMALPHA_API_KEY"
 client = wolframalpha.Client(APP_ID)
+
+# Spotify
+CLIENT_ID = "b890c23f87884958bff8b927ef2c879d"
+CLIENT_SECRET = "f553a526548a482ea8782782f8c6bbd4"
+sp = spotipy.Spotify(
+    auth_manager=SpotifyOAuth(
+        scope="user-top-read user-library-read playlist-modify-private playlist-read-collaborative playlist-read-private",
+        redirect_uri="http://example.com",
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        show_dialog=True,
+        cache_path="token.txt",
+        username="3165do7y2lvhed6ax7o3guhrhq7m"
+    )
+)
+
 
 # MAIN
 
@@ -187,6 +247,14 @@ while True:
 
     elif in_task(["movie"], task):
         movie_rec()
+
+    elif in_task(['whatsapp'], task):
+        speak("What would you like to message")
+        msg = listen()
+        send_whatsapp_message(msg, True)
+
+    elif in_task(['wikipedia', 'wiki']):
+        speak(wikipedia_query(query.remove('wikipedia').remove('wiki')))
 
     elif in_task(["thank"], task):
         speak("You're welcome")
