@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gideon-assistant"
+version = "1.0.0"
+description = "Local-first headless personal assistant for Windows"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["requests>=2.32,<3", "keyring>=25,<27", "cryptography>=44,<51", "python-dateutil>=2.9,<3", "psutil>=6,<8", "pyttsx3>=2.98,<3", "SpeechRecognition>=3.14,<4", "sounddevice>=0.5,<1", "vosk>=0.3.45,<1"]
+
+[project.optional-dependencies]
+google = ["google-api-python-client>=2.150,<3", "google-auth-oauthlib>=1.2,<2"]
+windows = ["winotify>=1.1,<2", "pycaw>=20240210"]
+all = ["google-api-python-client>=2.150,<3", "google-auth-oauthlib>=1.2,<2", "winotify>=1.1,<2", "pycaw>=20240210"]
+dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.9,<1", "mypy>=1.14,<2", "types-requests>=2.32", "types-python-dateutil>=2.9"]
+
+[project.scripts]
+gideon = "gideon.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["gideon*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E9", "F", "I"]
+
+[tool.mypy]
+python_version = "3.14"
+ignore_missing_imports = true
+check_untyped_defs = true

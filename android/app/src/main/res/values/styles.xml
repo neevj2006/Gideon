@@ -1,0 +1,5 @@
+<resources>
+    <style name="Theme.Gideon" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">#6750A4</item><item name="colorSecondary">#D0BCFF</item>
+    </style>
+</resources>
